@@ -11,7 +11,10 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using TicketBooth.Web.Data;
+using TicketBooth.Domain.Identity;
+using TicketBooth.Repository;
+using TicketBooth.Repository.Interface;
+using TicketBooth.Service.Interface;
 
 namespace TicketBooth.Web
 {
@@ -30,10 +33,26 @@ namespace TicketBooth.Web
             services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlServer(
                     Configuration.GetConnectionString("DefaultConnection")));
-            services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
+            services.AddDefaultIdentity<TicketBoothUser>(options => options.SignIn.RequireConfirmedAccount = false)
                 .AddEntityFrameworkStores<ApplicationDbContext>();
             services.AddControllersWithViews();
             services.AddRazorPages();
+
+            
+
+            services.AddTransient<ITheaterRepository, Repository.Implementation.TheaterRepository>();
+            services.AddTransient<ITicketRepository, Repository.Implementation.TicketRepository>();
+            services.AddTransient<IUserRepository, Repository.Implementation.UserRepository>();
+            services.AddTransient<ICartRepository, Repository.Implementation.CartRepository>();
+            services.AddTransient<IOrderRepository, Repository.Implementation.OrderRepository>();
+            services.AddTransient<IMovieRepository, Repository.Implementation.MovieRepository>();
+
+            services.AddTransient<ITheaterService, Service.Implementation.TheaterService>();
+            services.AddTransient<IMovieService, Service.Implementation.MovieService>();
+            services.AddTransient<ITicketService, Service.Implementation.TicketService>();
+            services.AddTransient<ICartService, Service.Implementation.CartService>();
+
+            
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
